@@ -14,3 +14,10 @@ while i <= length
   fprintf(f, '\n');
 end
 fclose(f);
+
+f = fopen('dictionary.txt', 'wt');
+for i=1:size(A,1)
+  fprintf(f, '%s\n', dictionary(i,:));
+end
+fclose(f);
+
