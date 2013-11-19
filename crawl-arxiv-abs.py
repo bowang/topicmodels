@@ -18,7 +18,7 @@ if os.path.isfile(filename):
 	exit()
 else:
 	print 'fetch'
-site = requests.get('http://arxiv.org/list/' + field + '/' + id + '?show=30')
+site = requests.get('http://arxiv.org/list/' + field + '/' + id + '?show=3000')
 soup = BeautifulSoup(site.text.encode('ISO-8859-1'))
 f = open(filename, 'w')
 hrefs = soup.findAll("a", attrs={"title": "Abstract"})
