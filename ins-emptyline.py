@@ -4,11 +4,14 @@ import os
 import sys
 
 dir = os.path.join(sys.argv[1])
-for root,dirs,files in os.walk(dir):
-  for file in files:
-    if file.endswith('.txt'):
-      with open(os.path.join(root,file)) as ifs:
-      	ofs = open(file, 'w')
-        for line in ifs:
-          ofs.write(line + '\n')
-        ofs.close()
+outdir = sys.argv[1] + '/tmg-format/'
+if (os.path.exists(outdir)==False):
+  os.mkdir(outdir)
+for file in os.listdir(dir):
+  if file.endswith('.txt'):
+    with open(file) as ifs:
+      ofsname = outdir + file
+      ofs = open(ofsname, 'w')
+      for line in ifs:
+        ofs.write(line + '\n')
+      ofs.close()
