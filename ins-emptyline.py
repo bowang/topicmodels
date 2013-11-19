@@ -9,7 +9,7 @@ if (os.path.exists(outdir)==False):
   os.mkdir(outdir)
 for file in os.listdir(dir):
   if file.endswith('.txt'):
-    with open(file) as ifs:
+    with open(dir + file) as ifs:
       ofsname = outdir + file
       ofs = open(ofsname, 'w')
       for line in ifs:

@@ -15,9 +15,11 @@ while i <= length
 end
 fclose(f);
 
-f = fopen('dictionary.txt', 'wt');
+fdic = fopen('dictionary.txt', 'wt');
+fdoc = fopen('docmap.txt', 'wt');
 for i=1:size(A,1)
-  fprintf(f, '%s\n', dictionary(i,:));
+  fprintf(fdic, '%s\n', dictionary(i,:));
+  fprintf(fdoc, 'doc%d\n', i);
 end
-fclose(f);
-
+fclose(fdic);
+fclose(fdoc);
