@@ -26,6 +26,8 @@ for href in hrefs:
 	absUrl = 'http://arxiv.org' + href.get('href')
 	absResp = requests.get(absUrl)
 	absSoup = BeautifulSoup(absResp.text.encode('ISO-8859-1'))
-	f.write(absSoup.find("blockquote").contents[2].replace('\n', ' ').encode('utf-8'))
+	abstract = absSoup.find("blockquote")
+	if hasattr(abstract, 'contents'):
+		f.write(abstract.contents[2].replace('\n', ' ').encode('utf-8'))
 	f.write('\n')
 f.close()
