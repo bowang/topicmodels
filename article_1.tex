@@ -1,0 +1,164 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Large Colored Title Article
+% LaTeX Template
+% Version 1.1 (25/11/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[DIV=calc, paper=a4, fontsize=11pt, twocolumn]{scrartcl}	 % A4 paper and 11pt font size
+
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage[protrusion=true,expansion=true]{microtype} % Better typography
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage[svgnames]{xcolor} % Enabling colors by their 'svgnames'
+\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
+\usepackage{booktabs} % Horizontal rules in tables
+\usepackage{fix-cm}	 % Custom font sizes - used for the initial letter in the document
+
+\usepackage{sectsty} % Enables custom section titles
+\allsectionsfont{\usefont{OT1}{phv}{b}{n}} % Change the font of all section commands
+
+\usepackage{fancyhdr} % Needed to define custom headers/footers
+\pagestyle{fancy} % Enables the custom headers/footers
+\usepackage{lastpage} % Used to determine the number of pages in the document (for "Page X of Total")
+
+% Headers - all currently empty
+\lhead{}
+\chead{}
+\rhead{}
+
+% Footers
+\lfoot{}
+\cfoot{}
+\rfoot{\footnotesize Page \thepage\ of \pageref{LastPage}} % "Page 1 of 2"
+
+\renewcommand{\headrulewidth}{0.0pt} % No header rule
+\renewcommand{\footrulewidth}{0.4pt} % Thin footer rule
+
+\usepackage{lettrine} % Package to accentuate the first letter of the text
+\newcommand{\initial}[1]{ % Defines the command and style for the first letter
+\lettrine[lines=3,lhang=0.3,nindent=0em]{
+\color{DarkGoldenrod}
+{\textsf{#1}}}{}}
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\usepackage{titling} % Allows custom title configuration
+
+\newcommand{\HorRule}{\color{DarkGoldenrod} \rule{\linewidth}{1pt}} % Defines the gold horizontal rule around the title
+
+\pretitle{\vspace{-30pt} \begin{flushleft} \HorRule \fontsize{50}{50} \usefont{OT1}{phv}{b}{n} \color{DarkRed} \selectfont} % Horizontal rule before the title
+
+\title{\Huge Literature Search Made Easy: Mining Online Archives for Research Topic Trends} % Your article title
+
+\posttitle{\par\end{flushleft}\vskip 0.5em} % Whitespace under the title
+
+\preauthor{\begin{flushleft}\large \lineskip 0.5em \usefont{OT1}{phv}{b}{sl} \color{DarkRed}} % Author font configuration
+
+\author{Bo Wang, Min Liu } % Your name
+
+\postauthor{\footnotesize \usefont{OT1}{phv}{m}{sl} \color{Black} % Configuration for the institution name
+Stanford University % Your institution
+
+\par\end{flushleft}\HorRule} % Horizontal rule after the title
+
+\date{} % Add a date here if you would like one to appear underneath the title block
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Print the title
+
+\thispagestyle{fancy} % Enabling the custom headers/footers for the first page 
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT
+%----------------------------------------------------------------------------------------
+
+% The first character should be within \initial{}
+\initial{M}\textbf{any of us have been faced with this situation: we found a certain field of research intriguing, went to an online archive to search for related papers, and the results were just less than satisfactory: they're too unstructured to get any bigger picture from, such as how this field evolved over time, of what sub-fields it is composed of and which papers are most influential who are the most active researchers. Instead of relying on human instinct for such insight, our project provides an alternative: using machine learning algorithms to peruse thru online archives, generate information of interest, and present them in a human friendly way.  We wrote a python script to scrape title, abstract and author information from \url{http://arxiv.org/}, used machine learning algorithms hierarchical latent Dirichlet allocation (hLDA), dynamic topic model and supervised latent Dirichlet allocation (sLDA) to analyze the data. Interpretation and discussion of the results are also offered.}
+
+%----------------------------------------------------------------------------------------
+%	ARTICLE CONTENTS
+%----------------------------------------------------------------------------------------
+
+\section*{Data Collection}
+
+Our data source is the online archive website arXiv. In fields like mathematics and physics, almost all scientific papers are self-archived on the arXiv. Despite not peer reviewed, arXiv has its submissions reviewed (or even recategorized if off-topic) by moderators that are experts in their field of research. In addition, submission date on arXiv more accurately reflect when the research was done, since usually papers are posted on arXiv months before they are finally published on a peer reviewed journal or conference. Based on these facts, we believe arXiv is a better collection of research works than any journal or conference alone.\newline
+The titles, authors, abstracts and citation of papers are scraped from API of \url{http://arxiv.org/cond-mat/} using Python script and submissions in the same month are stored in one csv file. We used only papers from the "condensed matter physics" section since this is the field that we're familiar with and would be able to interpret better. But the methods demonstrated in this report can be applied to the analysis any field.
+
+
+\section*{Methods}
+\subsection*{Hierarchical Latent Dirichlet Allocation (hLDA)}
+For the purpose of hierarchical clustering of topics, we used hierarchical latent Dirichlet allocation(hLDA) \cite{1}, which is a variation of latent Dirichlet allocation(LDA) \cite{2} that finds a hierarchy of topics based on their similarities. Details of the algorithms will be added to the report later. Finding the hierarchy allows us to get a grasp of a field from a top-down point of view. 
+
+\subsection*{Dynamic Topic Model}
+
+\subsection*{Supervised Latent Dirichlet Allocation (sLDA)}
+
+\section*{Hierarchical Clustering of Topics}
+
+%------------------------------------------------
+
+
+\subsection*{Method}
+
+  
+\subsection*{Experiment}
+We used abstracts of the first 6000 submissions to the condensed matter section as our corpus. A term matrix generator (TMG) \url{http://scgroup20.ceid.upatras.gr:8000/tmg/} with stop words filter is used to generate a dictionary containing all terms that appeared in at least 5 documents and a term matrix whose (i, j)-th element n denotes that the j-th word in our dictionary occurred n times in the i-th document. The resulting matrix had 19327 terms and was fed thru an off the shelf C-package "hlda-c" \cite{1} implementing hLDA.\\
+A depth 4 tree generated by "hlda-c" looks like:\newline
+			\begin{figure}[!ht]
+				\centerline{\includegraphics[scale = 0.35]{tree10000.png}}
+				\caption{Unsupervised Hierarchical Classification of First 10000 Submissions to Condensed Matter Physics Section}
+			\end{figure}
+\newline
+Despite being completely unsupervised, the result is actually surprisingly good. The three numbers in square brackets before each line are tree level, number of terms and number of documents in this branch. The top node (0th - level ) contains the function words. In the next level, the documents are classified into three branches: first class containing 5539 documents, second class containing 417 documents and the third class containing 44 documents. Eventhough the dataset seem to very skewed, with the largest class containing 100 times more documents than the smallest class, the classification captures sub fields in condensed matter physics very nicely: the first class is still very large, so its keywords are still pretty much function words, but if we go a level down to level 2, we can see the first branch contains mostly theoretical studies on correlated systems such as superconductors, antiferromagnet, quantum Hall and Bose Eistein condensation; the second branch contains experimental papers on material growth and transport measurements; Second class on level 1 is topics on studies in the intersection of condensed matter physics and chemistry, namely material synthesis; third branch on level 1 contains topics on computational physics -- using computational methods to calculate physical and chemical properties of materials. The hierarchical clustering not only gives us a very good idea what the sub fields are, but also ranked them according to their popularity, which agrees well with our knowledge of the field.      
+
+\section*{Discussion}
+\section*{Conclusion}
+\section*{Future Improvement}
+\section*{Acknowlegement}
+We would like to thank the TAs for their guidance and advice for this project. We also want to thank Prof. Andrew Ng for such for introducing us to the exciting field of machine learning.  
+%----------------------------------------------------------------------------------------
+%	REFERENCE LIST
+%----------------------------------------------------------------------------------------
+
+\begin{thebibliography}{99}
+
+\bibitem[1] {1}
+  Blei, D., Griffiths, T. and Jordan M.
+  \emph{The Nested Chinese Restaurant Process and Bayesian Nonparametric Inference of Topic Hierarchies}.
+  Journal of the ACM, Vol. 57, No. 2, Article 7,
+ Jan 2010.
+ 
+\bibitem[2] {2}
+  Blei, D., Ng, A. and Jordan M.
+  \emph{Latent Dirichlet Allocation}.
+  The Journal of Machine Learning Research,
+ Volume 3, 993 - 1022
+ Mar 2003
+ 
+
+\end{thebibliography}
+%----------------------------------------------------------------------------------------
+
+\end{document}
