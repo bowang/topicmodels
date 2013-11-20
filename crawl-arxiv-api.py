@@ -31,12 +31,11 @@ for entry in entries:
   id = tokens[len(tokens) - 1]
   title = entry.getElementsByTagName('title')[0].childNodes[0].data.encode('ascii', 'ignore').replace('\n', ' ')
   abstract = entry.getElementsByTagName('summary')[0].childNodes[0].data.encode('ascii', 'ignore').replace('\n', ' ').lstrip()
-  publishTime = entry.getElementsByTagName('published')[0].childNodes[0].data
-  year = str(publishTime[0:4])
+  year = str(id[0:2])
   if (files.has_key(year) == False):
     filename = cat + '-' + year + '.txt'
     print 'created file ' + filename
-    files[year] = open(filename, 'w')
+    files[year] = open(filename, 'a')
   files[year].write(id + '\n' + title + '\n' + abstract + '\n\n')
 
 for key in files:
