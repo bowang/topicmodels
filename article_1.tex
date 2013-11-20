@@ -110,15 +110,16 @@ The titles, authors, abstracts and citation of papers are scraped from API of \u
 \section*{Methods}
 
 \subsection*{Latent Dirichlet Allocation (LDA)}
-
+Latent Dirichlet Allocation (LDA) \cite{2} is a topic modeling algorithm which assumes that each document is a mixture of various topics, whose prior distribution takes a Dirichlet distribution. In LDA, the number of topics is given a priori.
 
 \subsection*{Hierarchical Latent Dirichlet Allocation (hLDA)}
 For the purpose of hierarchical clustering of topics, we used hierarchical latent Dirichlet allocation(hLDA) \cite{1}, which is a variation of latent Dirichlet allocation(LDA) \cite{2} that finds a hierarchy of topics based on their similarities. Details of the algorithms will be added to the report later. Finding the hierarchy allows us to get a grasp of a field from a top-down point of view. 
 
 \subsection*{Dynamic Topic Model (DTM)}
-
+Dynamic topic models (DTM) \cite{3} are generative models that can be used to analyze the evolution of topics of a collection of documents over time. It is an extension of LDA which can handle sequential documents.\newline
+In LDA, both the order the words appear in a document and the order the documents appear in the corpus are oblivious to the model. Whereas words are still assumed to be exchangeable, in a dynamic topic model the order of the documents plays a fundamental role. More precisely, the documents are grouped by time slice (e.g.: years) and it is assumed that the documents of each group come from a set of topics that evolved from the set of the previous slice.
 \subsection*{Supervised Latent Dirichlet Allocation (sLDA)}
-
+Supervised latent Dirichlet allocation (sLDA) is a statistical model of labelled documents, which can be used to predict response values for new documents. In this project, we plan to use sLDA to model the number of citations of each paper, and predict the importance of new papers based on the fitted model.
 \section*{Experiments}
 
 We used abstracts of the first 6000 submissions to the condensed matter section as our corpus. A term matrix generator (TMG) \url{http://scgroup20.ceid.upatras.gr:8000/tmg/} with stop words filter is used to generate a dictionary containing all terms that appeared in at least 5 documents and a term matrix whose (i, j)-th element n denotes that the j-th word in our dictionary occurred n times in the i-th document. The resulting matrix had 19327 terms and was fed thru an off the shelf C-package "hlda-c" \cite{1} implementing hLDA.\\
@@ -158,7 +159,17 @@ We would like to thank the TAs for their guidance and advice for this project. W
  Volume 3, 993 - 1022
  Mar 2003
  
-
+ \bibitem[3] {3}
+  Blei, D. and Lafferty, J.
+  \emph{Dynamic Topic Models}.
+  Proceedings of the 23rd International Conference of Machine Learning ,
+ Pittsburgh, PA,
+ 2006
+ 
+ \bibitem[4] {4}
+  Blei, D. and McAuliffe, J.
+  \emph{Supervised Topic Models}.
+ 
 \end{thebibliography}
 %----------------------------------------------------------------------------------------
 
