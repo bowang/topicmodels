@@ -95,7 +95,7 @@ Stanford University % Your institution
 %----------------------------------------------------------------------------------------
 
 % The first character should be within \initial{}
-\initial{M}\textbf{any of us have been faced with this situation: we found a certain field of research intriguing, went to an online archive to search for related papers, and the results were just less than satisfactory: they're too unstructured to get any bigger picture from, such as how this field evolved over time, of what sub-fields it is composed of and which papers are most influential who are the most active researchers. Instead of relying on human instinct for such insight, our project provides an alternative: using machine learning algorithms to peruse thru online archives, generate information of interest, and present them in a human friendly way.  We wrote a python script to scrape title, abstract and author information from \url{http://arxiv.org/}, used machine learning algorithms hierarchical latent Dirichlet allocation (hLDA), dynamic topic model and supervised latent Dirichlet allocation (sLDA) to analyze the data. Interpretation and discussion of the results are also offered.}
+\initial{M}\textbf{any of us have been faced with this situation: we found a certain field of research intriguing, went to an online archive to search for related papers, and the results were just less than satisfactory: they are too unstructured to obtain a big picture, such as how this field evolves over time, what sub-fields it is composed of, which papers are most influential, and who are the most active researchers. Instead of relying on human instinct for such insights, our project provides an alternative: using machine learning algorithms to peruse thru online archives, generate information of interest, and present them in a human friendly way. We scrape thousands of papers' title, abstract and author information from arXiv, use hierarchical latent Dirichlet allocation (hLDA), dynamic topic model (DTM) and supervised latent Dirichlet allocation (sLDA) to analyze the data. Interpretation and discussion of the results are also offered.}
 
 %----------------------------------------------------------------------------------------
 %	ARTICLE CONTENTS
@@ -103,27 +103,24 @@ Stanford University % Your institution
 
 \section*{Data Collection}
 
-Our data source is the online archive website arXiv. In fields like mathematics and physics, almost all scientific papers are self-archived on the arXiv. Despite not peer reviewed, arXiv has its submissions reviewed (or even recategorized if off-topic) by moderators that are experts in their field of research. In addition, submission date on arXiv more accurately reflect when the research was done, since usually papers are posted on arXiv months before they are finally published on a peer reviewed journal or conference. Based on these facts, we believe arXiv is a better collection of research works than any journal or conference alone.\newline
-The titles, authors, abstracts and citation of papers are scraped from API of \url{http://arxiv.org/cond-mat/} using Python script and submissions in the same month are stored in one csv file. We used only papers from the "condensed matter physics" section since this is the field that we're familiar with and would be able to interpret better. But the methods demonstrated in this report can be applied to the analysis any field.
+We crawl the data from the online archive website arXiv. In fields like mathematics and physics, almost all scientific papers are self-archived on the arXiv. Despite not peer reviewed, arXiv has its submissions reviewed (or even recategorized if off-topic) by moderators that are experts in their fields of research. In addition, submission dates on arXiv more accurately reflect when the research was done, since usually papers are posted on arXiv months before they are finally published on a peer reviewed journal or conference. Based on these facts, we believe arXiv is a better collection of research works than any journal or conference alone.
 
+The titles, authors, abstracts and citation of papers are scraped from API of \url{http://export.arxiv.org/api/} using Python and stored in separate files according to the publish year. We used only papers from the "condensed matter physics" section so far, since this is the field that we are familiar with and would be able to interpret the results better. But the methods demonstrated in this report can be applied to the analysis any field.
 
 \section*{Methods}
+
+\subsection*{Latent Dirichlet Allocation (LDA)}
+
+
 \subsection*{Hierarchical Latent Dirichlet Allocation (hLDA)}
 For the purpose of hierarchical clustering of topics, we used hierarchical latent Dirichlet allocation(hLDA) \cite{1}, which is a variation of latent Dirichlet allocation(LDA) \cite{2} that finds a hierarchy of topics based on their similarities. Details of the algorithms will be added to the report later. Finding the hierarchy allows us to get a grasp of a field from a top-down point of view. 
 
-\subsection*{Dynamic Topic Model}
+\subsection*{Dynamic Topic Model (DTM)}
 
 \subsection*{Supervised Latent Dirichlet Allocation (sLDA)}
 
-\section*{Hierarchical Clustering of Topics}
+\section*{Experiments}
 
-%------------------------------------------------
-
-
-\subsection*{Method}
-
-  
-\subsection*{Experiment}
 We used abstracts of the first 6000 submissions to the condensed matter section as our corpus. A term matrix generator (TMG) \url{http://scgroup20.ceid.upatras.gr:8000/tmg/} with stop words filter is used to generate a dictionary containing all terms that appeared in at least 5 documents and a term matrix whose (i, j)-th element n denotes that the j-th word in our dictionary occurred n times in the i-th document. The resulting matrix had 19327 terms and was fed thru an off the shelf C-package "hlda-c" \cite{1} implementing hLDA.\\
 A depth 4 tree generated by "hlda-c" looks like:\newline
 			\begin{figure}[!ht]
@@ -133,9 +130,13 @@ A depth 4 tree generated by "hlda-c" looks like:\newline
 \newline
 Despite being completely unsupervised, the result is actually surprisingly good. The three numbers in square brackets before each line are tree level, number of terms and number of documents in this branch. The top node (0th - level ) contains the function words. In the next level, the documents are classified into three branches: first class containing 5539 documents, second class containing 417 documents and the third class containing 44 documents. Eventhough the dataset seem to very skewed, with the largest class containing 100 times more documents than the smallest class, the classification captures sub fields in condensed matter physics very nicely: the first class is still very large, so its keywords are still pretty much function words, but if we go a level down to level 2, we can see the first branch contains mostly theoretical studies on correlated systems such as superconductors, antiferromagnet, quantum Hall and Bose Eistein condensation; the second branch contains experimental papers on material growth and transport measurements; Second class on level 1 is topics on studies in the intersection of condensed matter physics and chemistry, namely material synthesis; third branch on level 1 contains topics on computational physics -- using computational methods to calculate physical and chemical properties of materials. The hierarchical clustering not only gives us a very good idea what the sub fields are, but also ranked them according to their popularity, which agrees well with our knowledge of the field.      
 
-\section*{Discussion}
-\section*{Conclusion}
-\section*{Future Improvement}
+\section*{Milestone: Progress So Far}
+So far we have done the following tasks.
+
+
+\section*{Milestone: Next Step}
+
+
 \section*{Acknowlegement}
 We would like to thank the TAs for their guidance and advice for this project. We also want to thank Prof. Andrew Ng for such for introducing us to the exciting field of machine learning.  
 %----------------------------------------------------------------------------------------
