@@ -19,6 +19,7 @@ if (argc > 3):
 print 'catogory = {}\nstart = {}\nmax_results = {}'.format(cat, start, max_results)
 
 url = 'http://export.arxiv.org/api/query?search_query=cat:{}&start={}&max_results={}'.format(cat, start, max_results)
+print url
 data = urllib.urlopen(url).read()
 xmldoc = minidom.parseString(data)
 
@@ -28,8 +29,8 @@ for entry in entries:
   idUrl = entry.getElementsByTagName('id')[0].childNodes[0].data
   tokens = idUrl.split('/')
   id = tokens[len(tokens) - 1]
-  title = entry.getElementsByTagName('title')[0].childNodes[0].data.replace('\n', ' ').encode('utf-8')
-  abstract = entry.getElementsByTagName('summary')[0].childNodes[0].data.replace('\n', ' ').lstrip().encode('utf-8')
+  title = entry.getElementsByTagName('title')[0].childNodes[0].data.encode('ascii', 'ignore').replace('\n', ' ')
+  abstract = entry.getElementsByTagName('summary')[0].childNodes[0].data.encode('ascii', 'ignore').replace('\n', ' ').lstrip()
   publishTime = entry.getElementsByTagName('published')[0].childNodes[0].data
   year = str(publishTime[0:4])
   if (files.has_key(year) == False):
