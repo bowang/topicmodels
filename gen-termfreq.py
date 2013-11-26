@@ -42,7 +42,7 @@ def main():
         started = False
         prev = ""
         for token in segment.split():
-          token = token.replace('--', '-')
+          token = token.replace('--', '-').lstrip('\"\'-+*_').rstrip('\"\'-+*_')
           # remove latex format tokens
           # remove stop words
           # remove tokens containing no letters
