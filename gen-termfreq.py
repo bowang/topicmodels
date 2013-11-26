@@ -2,7 +2,7 @@
 import sys
 import os
 import re
-import pprint
+import inflect
 from collections import OrderedDict
 from stemming.porter2 import stem
 
@@ -10,7 +10,7 @@ least_term_freq = 5
 least_phrase_freq = 2
 print_limit = 100000
 
-pp = pprint.PrettyPrinter()
+p = inflect.engine()
 
 def main():
   stopwords = set()
@@ -42,7 +42,15 @@ def main():
         started = False
         prev = ""
         for token in segment.split():
+          # remove leading and trailing non alphanumeric characters
           token = token.replace('--', '-').lstrip('\"\'-+*_').rstrip('\"\'-+*_')
+          # convert to singular form
+          if all(c.isalpha() for c in token):
+            singular = p.singular_noun(token)
+            if singular != False:
+              token = singular
+          if len(token) == 0:
+            continue
           # remove latex format tokens
           # remove stop words
           # remove tokens containing no letters
@@ -97,7 +105,7 @@ def main():
 
   # generate term:freq matrix
   tffile = open('termfreq.txt', 'w')
-  for docid in range(1, len(docs) + 1):
+  for docid in range(1, len(docs) + (len(docs[len(docs)]) > 0)):
     tflist = ''
     tfnum = 0
     for term in docs[docid]:
@@ -120,7 +128,7 @@ def main():
 
   # generate docmap
   dmfile = open('docmap.txt', 'w')
-  for docid in range(1, len(docs) + 1):
+  for docid in range(1, len(docs) + (len(docs[len(docs)]) > 0)):
     dmfile.write('doc' + str(docid) + '\n');
   dmfile.close()
 if  __name__ =='__main__':main()
