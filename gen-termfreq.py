@@ -6,8 +6,9 @@ import pprint
 from collections import OrderedDict
 from stemming.porter2 import stem
 
-least_term_freq = 2
+least_term_freq = 5
 least_phrase_freq = 2
+print_limit = 100000
 
 pp = pprint.PrettyPrinter()
 
@@ -41,10 +42,13 @@ def main():
         started = False
         prev = ""
         for token in segment.split():
+          token = token.replace('--', '-')
           # remove latex format tokens
-          if  len(re.findall(r'[${}\\]+', token)) > 0 or \
-              token in stopwords or \
-              token.isdigit():
+          # remove stop words
+          # remove tokens containing no letters
+          if len(re.findall(r'[${}+\[\]\\]+', token)) > 0 or \
+             token in stopwords or \
+             not any(c.isalpha() for c in token):
             started = False
             continue
           # generate word groups
@@ -77,15 +81,19 @@ def main():
 
   vocab_eff = OrderedDict(sorted(filter(lambda (k, v): v >= least_term_freq, vocab.items())))
   phrases_eff = OrderedDict(sorted(filter(lambda (k, v): v >= least_phrase_freq, phrases.items())))
+  vocab_eff_keys = vocab_eff.keys()
+  phrases_eff_keys = phrases_eff.keys()
   num_vocab_eff = len(vocab_eff)
   num_phrases_eff = len(phrases_eff)
 
   print 'effective vocabulary ({}): '.format(num_vocab_eff)
-  print vocab_eff
-  print ''
+  if num_vocab_eff < print_limit:
+    print vocab_eff
+    print ''
   print 'effective phrases ({}): '.format(num_phrases_eff)
-  print phrases_eff
-  print ''
+  if num_phrases_eff < print_limit:
+    print phrases_eff
+    print ''
 
   # generate term:freq matrix
   tffile = open('termfreq.txt', 'w')
@@ -94,10 +102,10 @@ def main():
     tfnum = 0
     for term in docs[docid]:
       if term in vocab_eff:
-        tflist += ' ' + str(vocab_eff.keys().index(term)) + ':' + str(docs[docid][term])
+        tflist += ' ' + str(vocab_eff_keys.index(term)) + ':' + str(docs[docid][term])
         tfnum += 1
       elif term in phrases_eff:
-        tflist += ' ' + str(phrases_eff.keys().index(term) + num_vocab_eff) + ':' + str(docs[docid][term])
+        tflist += ' ' + str(phrases_eff_keys.index(term) + num_vocab_eff) + ':' + str(docs[docid][term])
         tfnum += 1
     tffile.write(str(tfnum) + tflist + '\n')
   tffile.close()
