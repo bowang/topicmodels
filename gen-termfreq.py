@@ -7,12 +7,43 @@ import operator
 from collections import OrderedDict
 from stemming.porter2 import stem
 
-least_term_freq = 5
-least_phrase_freq = 3
-least_term_length = 3
+min_term_freq = 5
+min_phrase_freq = 3
+min_term_length = 3
+max_phrase_length = 5
 print_limit = 100000
 
 p = inflect.engine()
+docs = {}
+vocab = {}
+phrases = {}
+
+def addPhrase (phrase, docid):
+  weight = len(phrase.split())
+  if phrase not in phrases:
+    phrases[phrase] = 1
+    docs[docid][phrase] = weight
+  else:
+    if phrase not in docs[docid]:
+      phrases[phrase] += 1
+      docs[docid][phrase] = weight
+    else:
+      docs[docid][phrase] += weight
+
+def addTerm (term, docid):
+  if term not in vocab:
+    vocab[term] = 1
+    docs[docid][term] = 1
+  else:
+    if term not in docs[docid]:
+      vocab[term] += 1
+      docs[docid][term] = 1
+    else:
+      docs[docid][term] += 1
+
+def shiftArray (arr):
+  for i in range(0, len(arr) - 1):
+    arr[i] = arr[i + 1]
 
 def main():
   stopwords = set()
@@ -20,11 +51,8 @@ def main():
     for line in f:
       stopwords.add(line.strip())
 
-  docs = {}
   docid = 1
   docs[docid] = {}
-  vocab = {}
-  phrases = {}
 
   with open(sys.argv[1]) as f:
     for line in f:
@@ -41,16 +69,11 @@ def main():
         continue
       for segment in segments:
         segment = segment.strip().lstrip().lower()
-        started = False
-        prev = ""
+        seqlen = 0
+        prevs = [0] * max_phrase_length
         for token in segment.split():
           # remove leading and trailing non alphanumeric characters
           token = token.replace('--', '-').lstrip('\"\'`~!-+*_').rstrip('\"\'`!~-+*_')
-          # convert to singular form
-          if all(c.isalpha() for c in token):
-            singular = p.singular_noun(token)
-            if singular != False:
-              token = singular.lower()
           # remove latex format tokens
           # remove stop words
           # remove tokens containing no letters
@@ -58,39 +81,32 @@ def main():
           if len(re.findall(r'[${}+\[\]\\]+', token)) > 0 or \
              token in stopwords or \
              not any(c.isalpha() for c in token) or \
-             len(token) < least_term_length:
-            started = False
+             len(token) < min_term_length:
+            seqlen = 0
             continue
-          # generate word groups
-          elif started == False:
-            started = True
-            prev = token
           else:
-            phrase = prev + ' ' + token
-            prev = token
-            if phrase not in phrases:
-              phrases[phrase] = 1
-              docs[docid][phrase] = 1
+            # convert to singular form
+            if all(c.isalpha() for c in token):
+              singular = p.singular_noun(token)
+              if singular != False:
+                token = singular.lower()
+            # generate word groups
+            if seqlen < max_phrase_length - 1:
+              prevs[seqlen] = token
+              seqlen += 1
             else:
-              if phrase not in docs[docid]:
-                phrases[phrase] += 1
-                docs[docid][phrase] = 1
-              else:
-                docs[docid][phrase] += 1
+              shiftArray(prevs)
+              prevs[seqlen] = token
+            phrase = token
+            for i in range(seqlen - 2, -1, -1):
+              phrase = str(prevs[i]) + ' ' + phrase
+              addPhrase(phrase, docid)
           # generate words
           token = stem(token)
-          if token not in vocab:
-            vocab[token] = 1
-            docs[docid][token] = 1
-          else:
-            if token not in docs[docid]:
-              vocab[token] += 1
-              docs[docid][token] = 1
-            else:
-              docs[docid][token] += 1
+          addTerm (token, docid)
 
-  vocab_eff = OrderedDict(sorted(filter(lambda (k, v): v >= least_term_freq, vocab.items())))
-  phrases_eff = OrderedDict(sorted(filter(lambda (k, v): v >= least_phrase_freq, phrases.items())))
+  vocab_eff = OrderedDict(sorted(filter(lambda (k, v): v >= min_term_freq, vocab.items())))
+  phrases_eff = OrderedDict(sorted(filter(lambda (k, v): v >= min_phrase_freq, phrases.items())))
   vocab_eff_keys = vocab_eff.keys()
   phrases_eff_keys = phrases_eff.keys()
   num_vocab_eff = len(vocab_eff)
