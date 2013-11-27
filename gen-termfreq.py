@@ -3,11 +3,13 @@ import sys
 import os
 import re
 import inflect
+import operator
 from collections import OrderedDict
 from stemming.porter2 import stem
 
 least_term_freq = 5
-least_phrase_freq = 2
+least_phrase_freq = 3
+least_term_length = 3
 print_limit = 100000
 
 p = inflect.engine()
@@ -48,15 +50,15 @@ def main():
           if all(c.isalpha() for c in token):
             singular = p.singular_noun(token)
             if singular != False:
-              token = singular
-          if len(token) == 0:
-            continue
+              token = singular.lower()
           # remove latex format tokens
           # remove stop words
           # remove tokens containing no letters
+          # remove tokens shorter than least term length
           if len(re.findall(r'[${}+\[\]\\]+', token)) > 0 or \
              token in stopwords or \
-             not any(c.isalpha() for c in token):
+             not any(c.isalpha() for c in token) or \
+             len(token) < least_term_length:
             started = False
             continue
           # generate word groups
@@ -102,6 +104,16 @@ def main():
   if num_phrases_eff < print_limit:
     print phrases_eff
     print ''
+
+  # print top terms/phrases
+  vocab_eff_rvs = sorted(vocab_eff.iteritems(), key=operator.itemgetter(1), reverse=True)
+  phrases_eff_rvs = sorted(phrases_eff.iteritems(), key=operator.itemgetter(1), reverse=True)
+  print 'top 10 out of {} terms'.format(num_vocab_eff)
+  for i in range(1,11):
+    print vocab_eff_rvs[i]
+  print '\ntop 10 out of {} phrases'.format(num_phrases_eff)
+  for i in range(1,11):
+    print phrases_eff_rvs[i]
 
   # generate term:freq matrix
   tffile = open('termfreq.txt', 'w')
