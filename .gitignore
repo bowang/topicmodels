@@ -2,5 +2,6 @@ data
 tools
 .DS_Store
 termcount.txt
+termfreq.txt
 dictionary.txt
 docmap.txt

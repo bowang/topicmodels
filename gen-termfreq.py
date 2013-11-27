@@ -43,7 +43,7 @@ def main():
         prev = ""
         for token in segment.split():
           # remove leading and trailing non alphanumeric characters
-          token = token.replace('--', '-').lstrip('\"\'-+*_').rstrip('\"\'-+*_')
+          token = token.replace('--', '-').lstrip('\"\'`~!-+*_').rstrip('\"\'`!~-+*_')
           # convert to singular form
           if all(c.isalpha() for c in token):
             singular = p.singular_noun(token)
@@ -121,9 +121,9 @@ def main():
   # generate dictionary
   dicfile = open('dictionary.txt', 'w')
   for term in vocab_eff:
-    dicfile.write(term + '\n')
+    dicfile.write('\"' + term + '\"\n')
   for term in phrases_eff:
-    dicfile.write(term + '\n')
+    dicfile.write('\"' + term + '\"\n')
   dicfile.close()
 
   # generate docmap
