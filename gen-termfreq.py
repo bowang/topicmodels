@@ -165,7 +165,8 @@ def main():
         if term in phrases_eff:
           tflist += ' ' + str(phrases_eff_keys.index(term) + num_vocab_eff) + ':' + str(docs[docid][term])
           tfnum += 1
-    tffile.write(str(tfnum) + tflist + '\n')
+    if tfnum > 0:
+      tffile.write(str(tfnum) + tflist + '\n')
   tffile.close()
 
   # generate dictionary
