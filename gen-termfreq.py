@@ -103,11 +103,11 @@ def main():
               prevs[seqlen] = token
               seqlen += 1
             else:
-              shiftArray(prevs)
               prevs[seqlen] = token
+              shiftArray(prevs)
             phrase = token
             for i in range(seqlen - 2, -1, -1):
-              phrase = str(prevs[i]) + ' ' + phrase
+              phrase = prevs[i] + ' ' + phrase
               addPhrase(phrase, docid)
           # generate words
           token = stem(token)
