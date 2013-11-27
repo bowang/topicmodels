@@ -14,6 +14,8 @@ max_phrase_length = 5
 print_limit = 100000
 
 p = inflect.engine()
+stopwords = set()
+commonverbs = set()
 docs = {}
 vocab = {}
 phrases = {}
@@ -46,10 +48,14 @@ def shiftArray (arr):
     arr[i] = arr[i + 1]
 
 def main():
-  stopwords = set()
   with open(sys.argv[2]) as f:
     for line in f:
       stopwords.add(line.strip())
+
+  if len(sys.argv) >= 4:
+    with open(sys.argv[3]) as f:
+      for line in f:
+        commonverbs.add(line.strip())
 
   docid = 1
   docs[docid] = {}
@@ -76,10 +82,12 @@ def main():
           token = token.replace('--', '-').lstrip('\"\'`~!-+*_').rstrip('\"\'`!~-+*_')
           # remove latex format tokens
           # remove stop words
+          # remove common verbs
           # remove tokens containing no letters
           # remove tokens shorter than least term length
           if len(re.findall(r'[${}+\[\]\\]+', token)) > 0 or \
              token in stopwords or \
+             stem(token) in commonverbs or \
              not any(c.isalpha() for c in token) or \
              len(token) < min_term_length:
             seqlen = 0
