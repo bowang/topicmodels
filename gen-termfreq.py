@@ -12,6 +12,7 @@ min_phrase_freq = 3
 min_term_length = 3
 max_phrase_length = 5
 print_limit = 100000
+print_top = 30
 
 p = inflect.engine()
 stopwords = set()
@@ -132,11 +133,11 @@ def main():
   # print top terms/phrases
   vocab_eff_rvs = sorted(vocab_eff.iteritems(), key=operator.itemgetter(1), reverse=True)
   phrases_eff_rvs = sorted(phrases_eff.iteritems(), key=operator.itemgetter(1), reverse=True)
-  print 'top 10 out of {} terms'.format(num_vocab_eff)
-  for i in range(1,11):
+  print 'top {} out of {} terms'.format(print_top, num_vocab_eff)
+  for i in range(1, print_top + 1):
     print vocab_eff_rvs[i]
-  print '\ntop 10 out of {} phrases'.format(num_phrases_eff)
-  for i in range(1,11):
+  print '\ntop {} out of {} phrases'.format(print_top, num_phrases_eff)
+  for i in range(1, print_top + 1):
     print phrases_eff_rvs[i]
 
   # generate term:freq matrix
