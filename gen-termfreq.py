@@ -68,6 +68,8 @@ def main():
       # empty line denotes the start of a new doc
       if line in ['\n', '\r\n']:
         docid += 1
+        if docid % 100 == 0:
+          print >> sys.stderr, 'docid = ' + str(docid)
         docs[docid] = {}
         continue
       segments = re.split('[,;.:?!()]+', line)
