@@ -374,3 +374,10 @@ your
 yours
 yourself
 yourselves
+recent
+recently
+result
+results
+analytic
+analytical
+study
