@@ -8,7 +8,7 @@ from collections import OrderedDict
 from stemming.porter2 import stem
 
 min_term_freq = 5
-min_phrase_freq = 3
+min_phrase_freq = 5
 min_term_length = 3
 max_phrase_length = 5
 print_top = 30
@@ -51,6 +51,10 @@ def shiftArray (arr):
     arr[i] = arr[i + 1]
 
 def main():
+  if len(sys.argv) < 3:
+    print '{} [abstracts.txt] [stopwords.txt] (commonverbs.txt)'.format(sys.argv[0])
+    return 1
+
   with open(sys.argv[2]) as f:
     for line in f:
       stopwords.add(line.strip())
@@ -77,7 +81,7 @@ def main():
       if len(segments) == 1 and segments[0].find(' ') == -1:
         continue
       for segment in segments:
-        segment = segment.strip().lstrip().lower()
+        segment = segment.rstrip().lstrip().lower()
         seqlen = 0
         prevs = [0] * max_phrase_length
         for token in segment.split():
@@ -96,12 +100,12 @@ def main():
              len(token) < min_term_length:
             seqlen = 0
             continue
-          else:
-            # convert to singular form
-            if all(c.isalpha() for c in token):
-              singular = p.singular_noun(token)
-              if singular != False:
-                token = singular.lower()
+
+          # convert to singular form
+          if all(c.isalpha() for c in token):
+            singular = p.singular_noun(token)
+            if singular != False:
+              token = singular.lower()
 
           # generate word groups
           if enable_phrase:
@@ -133,7 +137,19 @@ def main():
     print ''
 
   if enable_phrase:
-    phrases_eff = OrderedDict(sorted(filter(lambda (k, v): v >= min_phrase_freq, phrases.items())))
+    # dedup sub phrases
+    phrases_eff = dict(filter(lambda (k, v): v >= min_phrase_freq, phrases.items()))
+    phrases_eff_keys = phrases_eff.keys()
+    f = open('dedup.txt', 'w')
+    dedup = set()
+    for phrase in phrases_eff_keys:
+      for anotherPhrase in phrases_eff_keys:
+        if (phrase != anotherPhrase) and (phrase in anotherPhrase):
+          if (phrases_eff[phrase] <= phrases_eff[anotherPhrase]):
+            f.write('\"{}\" in \"{}\" ({}/{})\n'.format(phrase, anotherPhrase, phrases_eff[phrase], phrases_eff[anotherPhrase]))
+            dedup.add(phrase)
+    f.close()
+    phrases_eff = OrderedDict(sorted(filter(lambda (k, v): k not in dedup, phrases_eff.items())))
     phrases_eff_keys = phrases_eff.keys()
     num_phrases_eff = len(phrases_eff)
     print 'effective phrases ({}): '.format(num_phrases_eff)
