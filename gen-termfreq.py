@@ -24,7 +24,8 @@ vocab = {}
 phrases = {}
 
 def addPhrase (phrase, docid):
-  weight = len(phrase.split())
+  # weight = len(phrase.split())
+  weight = 1
   if phrase not in phrases:
     phrases[phrase] = 1
     docs[docid][phrase] = weight
