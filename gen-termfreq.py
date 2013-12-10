@@ -81,12 +81,27 @@ def main():
       if len(segments) == 1 and segments[0].find(' ') == -1:
         continue
       for segment in segments:
-        segment = segment.rstrip().lstrip().lower()
+        segment = segment.replace('--', '-').rstrip().lstrip().lower()
         seqlen = 0
         prevs = [0] * max_phrase_length
-        for token in segment.split():
+        tokens = segment.split()
+        tokens_copy = tokens
+        for token in tokens_copy:
+          if len(token) > min_term_length:
+            new_tokens = token.split('-')
+            if len(new_tokens) > 1:
+              flag = True
+              for new_token in new_tokens:
+                if len(new_token) < min_term_length:
+                  flag = False
+                  break
+              if flag:
+                tokens.remove(token)
+                tokens.extend(new_tokens)
+
+        for token in tokens:
           # remove leading and trailing non alphanumeric characters
-          token = token.replace('--', '-').lstrip('\"\'`~!-+*_').rstrip('\"\'`!~-+*_')
+          token = token.lstrip('\"\'`~!-+*_').rstrip('\"\'`!~-+*_')
 
           # remove latex format tokens
           # remove stop words
