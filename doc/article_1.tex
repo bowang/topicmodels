@@ -175,12 +175,9 @@ DTM computes the posterior of hidden variables of all the time slices, which is 
 				\label{fig: DTM}
 			\end{figure}
 
-\section*{Data Collection}
-\subsection*{Data Source}
-
-
-\subsection*{Feature Extraction}
-The collection of abstracts have to be converted to a term frequency matrix as required by all the topic models described above. Instead of generating a term matrix with raw data, we pre-process the data as follows to remove noise:
+\section*{Feature Extraction}
+\subsection*{Data Cleanse}
+The collection of documents have to be converted to a term frequency matrix as required by all the topic models described above. Instead of generating a term matrix with raw data, we pre-process the data as follows to remove noise:
 \begin{enumerate}
   \item Separate an abstract into sentences.
   \item For each sentence:
@@ -195,15 +192,16 @@ The collection of abstracts have to be converted to a term frequency matrix as r
 		\item Stem tokens.
   	\end{enumerate}
 \end{enumerate}
-Then we generate a dictionary containing all terms that appeared in at least 5 documents and a term matrix whose (i, j)-th element n denotes that the j-th word in the dictionary occurred n times in the i-th document. 
+Then we generate a dictionary containing all terms that appeared in at least 5 documents and a term matrix whose ($i$, $j$)-th element n denotes that the $j$-th word in the dictionary occurred n times in the $i$-th document.
  
-\subsection*{Feature Transformation}
-While doing data pre-processing, we observed that new concepts in science and technology are usually expressed in the form of phrases, such as "computer science", "machine learining" and "topic modeling", which indicates a topic might be better characterized by its "key phrases" instead of keywords. Furthermore, phrases also offer better interpretability of results, e.g. a topic with keywords {"dimension", "principal", "analysis"} may greatly perplex us, while one with key phrases {"principal component analysis", "dimension reduction"} is quite informative.\newline
+\subsection*{Phrase Generation}
+While doing data pre-processing, we observed that new concepts in science and technology are usually expressed in the form of phrases, such as "computer science", "machine learning" and "topic modeling", which indicates a topic might be better characterized by its "key phrases" instead of keywords. Furthermore, phrases also offer better interpretability of results, e.g. a topic with keywords {"dimension", "principal", "analysis"} may greatly perplex us, while one with key phrases {"principal component analysis", "dimension reduction"} is quite informative.\newline
 We generated phrases before the second step in the previous section by:
 \begin{enumerate}
   \item Separate words into blocks by punctuation marks and stop words.
   \item Within each block, generate phrases made up of consecutive words while restricting the maximum length of phrases to 5 words since usually phrases longer than 5 words are represented by their acronyms.
 \end{enumerate}
+Using the phrase generation method described above can lead to duplicate counts in the result. For example, phrase "Stanford University" will generate "Stanford":1, "University":1 and "Stanford University":1, while these two terms should only be counted as a phrase once. To eliminate this inaccuracy, we implemented a two-phase algorithm. The first phase is the same as the approach described above: extract terms and enumerate phrases in each document, then filter the terms and phrases whose occurrences are below the minimum threshold. In the second phase, documents are scanned through again. For each term in a document, we check whether it can be combined with its previous or next term to generate a phrase appearing in the filtered phrase dictionary. If not, this term is counted as one individual occurance; otherwise this term is skipped. This method basically recounts all terms and checks if their appearance contributing to the generation of a phrase. Only those terms not as part of a phrase is counted.
 
 \subsection*{Feature Weighting Schemes}
 
@@ -216,7 +214,7 @@ The titles, authors, abstracts and citation of papers are scraped from API of \u
 
 
 \subsection*{Results}
-\subsubsection*{Dynamic Topic Model}
+\subsubsection*{Trends in Research Topics}
 In our DTM experiment, the number of topics is set to 10 a priori. Results are summarized in Figure ~\ref{fig: DTM_table_unweight} and Figure ~\ref{fig: PhaseTrans_wp}. In Figure ~\ref{fig: DTM_table_unweight} we demonstrate 5 out of the 10 topics for purpose of figure size control, the 3 tables respectively are topics and keywords generated from only words, words plus phrases and only phrases. The classification with phrases clearly gives much better interpretability. Note that the first two tables look quite similar, in fact, in the second table, even though the corpus contains both words and phrases, we can hardly see any phrases among the important keywords. This is quite intuitive since in the corpus, there are 486712 words, 4645 of them unique and 112448 phrases with 11250 of them unique. So on average, a word appears ~100 times in the corpus while a phrase appears only ~10 times, resulting in a term matrix dominated by words. This is what has motivated our weighting scheme. \begin{figure}[!ht]
   \includegraphics[scale = 0.45]{dtm10_unweight.eps}
   \caption{DTM Topics and Keywords}
@@ -241,7 +239,7 @@ This plot has some really interesting implications:
 \item In certain field, it is easy to publish, but difficult to discover something of importance, while it's the opposite case in some other fields: "Quantum Hall Effect", although being quite famous even outside the field of physics has actually very few publications, which is probably due to the requirement of ultra high magnetic field in quantum Hall experiments. On the other hand, there are surprisingly large number of papers on "Computations and Simulations" despite the small number of researchers in this field (e.g. one out of about 40 physics faculty members at Stanford). This implies that if one's priority is to have as much publication as possible, then he should choose to do simulations.
 \end{inparaenum}
 
-\subsubsection*{Hierarchical Latent Dirichlet Allocation}
+\subsubsection*{Topic Hierarchy and Key Phrases}
  We produced three depth 4 trees generated words alone, words plus phrases and phrases alone, where the depth has to be chosen a priori. Branches with less than 30 keywords are pruned off. In Figure 7, we show the ** tree up to the fourth level, while the other two to the third level, because there are already too many branches on the third level. tree generated by words only, we only show the trees only up to the third level  fourth level to limit size of the plot. We also only display the first three branches from each node to limit the size of the tree, there are usually 5 trees from each node.
 
 We used abstracts of the first 6000 submissions to the condensed matter section as our corpus. A term matrix generator (TMG) \cite{5} with stop words filter is used to generate a dictionary containing all terms that appeared in at least 5 documents and a term matrix whose (i, j)-th element n denotes that the j-th word in our dictionary occurred n times in the i-th document. The resulting matrix had 19327 terms and was fed thru an off the shelf C-package "hlda-c" \cite{1} implementing hLDA.\\
@@ -253,10 +251,8 @@ A depth 4 tree generated by "hlda-c" looks like:\newline
 \newline
 Despite being completely unsupervised, the result is actually surprisingly good. The three numbers in square brackets before each line are tree level, number of terms and number of documents in this branch. The top node (0th - level ) contains the function words. In the next level, the documents are classified into three branches: first class containing 5539 documents, second class containing 417 documents and the third class containing 44 documents. Eventhough the dataset seem to very skewed, with the largest class containing 100 times more documents than the smallest class, the classification captures sub fields in condensed matter physics very nicely: the first class is still very large, so its keywords are still pretty much function words, but if we go a level down to level 2, we can see the first branch contains mostly theoretical studies on correlated systems such as superconductors, antiferromagnet, quantum Hall and Bose Eistein condensation; the second branch contains experimental papers on material growth and transport measurements; Second class on level 1 is topics on studies in the intersection of condensed matter physics and chemistry, namely material synthesis; third branch on level 1 contains topics on computational physics -- using computational methods to calculate physical and chemical properties of materials. The hierarchical clustering not only gives us a very good idea what the sub fields are, but also ranked them according to their popularity, which agrees well with our knowledge of the field.      
 
-\section*{Discussion}
+\section*{Conclusion}
 
-\section*{Acknowlegement}
-We would like to thank the TAs for their guidance and advice for this project. We also want to thank Prof. Andrew Ng for introducing us to the exciting field of machine learning.  
 %----------------------------------------------------------------------------------------
 %	REFERENCE LIST
 %----------------------------------------------------------------------------------------
