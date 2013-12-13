@@ -203,9 +203,6 @@ We generated phrases before the second step in the previous section by:
 \end{enumerate}
 Using the phrase generation method described above can lead to duplicate counts in the result. For example, phrase "Stanford University" will generate "Stanford":1, "University":1 and "Stanford University":1, while these two terms should only be counted as a phrase once. To eliminate this inaccuracy, we implemented a two-phase algorithm. The first phase is the same as the approach described above: extract terms and enumerate phrases in each document, then filter the terms and phrases whose occurrences are below the minimum threshold. In the second phase, documents are scanned through again. For each term in a document, we check whether it can be combined with its previous or next term to generate a phrase appearing in the filtered phrase dictionary. If not, this term is counted as one individual occurance; otherwise this term is skipped. This method basically recounts all terms and checks if their appearance contributing to the generation of a phrase. Only those terms not as part of a phrase is counted.
 
-\subsection*{Feature Weighting Schemes}
-
-
 \section*{Experiments}
 
 \subsection*{Data Collection}
