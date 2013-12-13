@@ -6,3 +6,7 @@ termfreq.txt
 dictionary.txt
 docmap.txt
 *-eps-converted-to.pdf
+*.aux
+*.log
+*.out
+*.synctex.gz
