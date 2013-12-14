@@ -69,7 +69,7 @@
 
 \pretitle{\vspace{-30pt} \begin{flushleft} \HorRule \fontsize{50}{50} \usefont{OT1}{phv}{b}{n} \color{DarkRed} \selectfont} % Horizontal rule before the title
 
-\title{\Huge Literature Search Made Easy: Mining Online Archives for Research Topic Trends} % Your article title
+\title{\Huge Literature Search Made Easy} % Your article title
 
 \posttitle{\par\end{flushleft}\vskip 0.5em} % Whitespace under the title
 
@@ -97,8 +97,8 @@
 %----------------------------------------------------------------------------------------
 
 % The first character should be within \initial{}
-\initial{M}\textbf{any of us have been faced with this situation: we found a certain field of research intriguing, went to an online archive to search for related papers, and the results were just less than satisfactory: they are too unstructured to obtain a big picture, such as how this field evolves over time, what sub-fields it is composed of, and which papers are most influential. Instead of relying on human instinct for such insights, our project provides an alternative: using machine learning algorithms to peruse thru online archives, generate information of interest, and present them in a human friendly way. Common topic modeling algorithms like latent Dirichlet allocation (LDA) do a good job in clustering topics, however, they are not able to extract key phrases in the corpus. We found phrase extraction an indispensable enabler towards a useful research trend analysis system, since many research topics are formed by multiple words. Only using individual terms is too abstract for a newcomer to a field to figure out the context. To solve this problem, we designed a mechanism to extract phrases in documents and then integrated it into hierarchical latent Dirichlet allocation (hLDA) and dynamic topic model (DTM) to automatically generate topic hierarchy and topic trends. In our experiments with 14185 condensed matter physics papers from arXiv, our method effectively classified papers into a tree of topics with significant meaning and picked out most representative words and phrases of each topic. With phrases, the result is visibly better than those purely relying on individual terms. Due to the page limit XXXXXXX}
-
+\initial{M}\textbf{any of us have been faced with this situation: we found a certain field of research intriguing, went to an online archive to search for related papers, and the results were just less than satisfactory: they are too unstructured to obtain a big picture, such as how this field evolves over time, what sub-fields it is composed of. Instead of relying on human instinct for such insights, our project provides an alternative: using machine learning algorithms to peruse thru online archives, generate the information of interest, and present them in a human friendly way. In this project, we used hierarchical latent Dirichlet allocation (hLDA) to find the topics and their hierarchy and dynamic topic model (DTM) to find the time evolution of topics. In addition to using these two models, we also made an important extension to them, i.e. constructing the corpus with "key phrases" instead of "keywords" . Furthermore, we devised an algorithm to remove the duplication in word and phrase count, which enabled us to generate a corpus composed of both keywords and "key phrases". This approach allowed us to greatly improve the interpretability of the result since a large number of concepts in science and technology are formulated as phrases.\\
+In our experiments with 14185 condensed matter physics papers from arXiv, the above methods effectively found the trend and hierarchy of research topics and revealed some very interesting insights. In our report, the "Trends in Research Topics" section demonstrates the analysis of topic trends, advantage of using "key phrases" versus keywords and a caveat in word and phrase count when constructing the corpus. The "Topic Hierarchy" section presents the generation of a hierarchy of topics and the solution to the caveat aforementioned.}
 %----------------------------------------------------------------------------------------
 %	ARTICLE CONTENTS
 %----------------------------------------------------------------------------------------
@@ -202,7 +202,7 @@ We generated phrases before the second step in the previous section by:
   \item Within each block, generate phrases made up of consecutive words while restricting the maximum length of phrases to 5 words since usually phrases longer than 5 words are represented by their acronyms.
 \end{enumerate}
 \subsection*{Duplicate Counts Removal}
-Using the phrase generation method described above can lead to duplicate counts in the result. For example, phrase "Stanford University" will generate "Stanford":1, "University":1 and "Stanford University":1, while these two terms should only be counted as a phrase once. To eliminate this inaccuracy, we implemented a two-phase algorithm. The first phase is the same as the approach described above: extract terms and enumerate phrases in each document, then filter the terms and phrases whose occurrences are below the minimum threshold. In the second phase, documents are scanned through again. For each term in a document, we check whether it can be combined with its previous or next term to generate a phrase appearing in the filtered phrase dictionary. If not, this term is counted as one individual occurance; otherwise this term is skipped. This method basically recounts all terms and checks if their appearance contributing to the generation of a phrase. Only those terms not as part of a phrase is counted.
+Using the phrase generation method described above can lead to duplicate counts in the resulting corpus. For example, phrase "Stanford University" will generate "Stanford" once, "University" once and "Stanford University" once, while these two words should only be counted as a phrase once. To eliminate this inaccuracy, we implement a two-phase algorithm. The first phase is the same as the approach described above: extract words and enumerate phrases in each document, then filter the words and phrases whose occurrences are below the minimum threshold. In the second phase, documents are scanned through again. For each word in a document, we check whether it can be combined with its previous or next word to generate a phrase appearing in the filtered phrase dictionary. If not, this word is counted as one individual occurrence; otherwise it is skipped. This method basically recounts all terms and checks if their appearance contribute to the generation of a phrase. Only those terms not as part of a phrase is counted. By using this procedure, we were able to produce a corpus which nicely combines both phrases and words. 
 
 \section*{Experiments}
 
@@ -213,19 +213,19 @@ The titles, authors, abstracts and citation of papers are scraped from API of \u
 
 \subsection*{Results}
 \subsubsection*{Trends in Research Topics}
-In our DTM experiment, the number of topics is set to 10 a priori. Results are summarized in Figure ~\ref{fig: DTM_table_unweight} and Figure ~\ref{fig: PhaseTrans_wp}. In Figure ~\ref{fig: DTM_table_unweight} we demonstrate 5 out of the 10 topics for purpose of figure size control, the 3 tables respectively are topics and keywords generated from only words, words plus phrases and only phrases. In these tables, the topics are written in bold and keywords in regular font style. We see the in all cases, the DTM algorithm very nicely identifies major research topics. However, the classification with phrases only clearly gives much better interpretability. Note that the first two tables look quite similar, in fact, in the second table, even though the corpus contains both words and phrases, we can hardly see any phrases among the important keywords. This is quite intuitive since in the corpus, there are 486712 words, 4645 of them unique and 112448 phrases with 11250 of them unique. So on average, a word appears ~100 times in the corpus while a phrase appears only ~10 times, resulting in a term matrix dominated by words. This is what has motivated to remove the duplicated counts in words. 
+In our DTM experiment, the number of topics is set to 10 a priori. Results are summarized in Figure ~\ref{fig: DTM_table_unweight} and Figure ~\ref{fig: PhaseTrans_wp}. In Figure ~\ref{fig: DTM_table_unweight} we demonstrate 5 out of the 10 topics for purpose of figure size control, the 3 tables respectively are topics and keywords generated from only words, words plus phrases and only phrases. In these tables, the topics are written in bold and keywords in regular font style. We see the in all cases, the DTM algorithm very nicely identifies major research topics. However, the classification with phrases only clearly gives much better interpretability. Note that the first two tables look quite similar, in fact, in the second table, even though the corpus contains both words and phrases, we can hardly see any phrases among the important keywords. This is quite intuitive since in the corpus, there are 486712 words, 4645 of them unique and 112448 phrases with 11250 of them unique. So on average, a word appears ~100 times in the corpus while a phrase appears only ~10 times, resulting in a term matrix dominated by words. This is what has motivated to remove the duplicated counts in words.
 \begin{figure}[!ht]
   \includegraphics[scale = 0.45]{dtm10_unweight.eps}
   \caption{DTM Topics and Keywords. \rm{ Corpura corresponding to the 3 tables are respectively composed of a) words b) words plus phrases without removing duplicate counts c) phrases}}
   \label{fig: DTM_table_unweight}
 \end{figure}
-In Figure ~\ref{fig: DTM_table_unweight}, we present the plot of one specific topic "phase transition", which is typical of all the plots.
+In Figure ~\ref{fig: PhaseTrans_wp}, we present the plot of one specific topic "phase transition", which is typical of all the plots.
 \begin{figure}[!ht]
   \includegraphics[scale = 0.365]{PhaseTrans(w_p).eps}
   \caption{Keywords Trend Plot of Topic "Phase Transition"}
   \label{fig: PhaseTrans_wp}
 \end{figure}
-From Figure ~\ref{fig: DTM_table_unweight}, despite the frequencies of keywords do rise and fall, there is hardly any obvious "trend". This is not unexpected since it's natural that a paper on "phase transition" should always involve keywords such as "phase transition" and "phase diagram" regardless of when it is published.\newline
+From Figure ~\ref{fig: PhaseTrans_wp}, despite the frequencies of keywords do rise and fall, there is hardly any obvious "trend". This is not unexpected since it's natural that a paper on "phase transition" should always involve keywords such as "phase transition" and "phase diagram" regardless of when it is published.\newline
 One very informative plot we can make is the evolution of topic popularity. In Figure ~\ref{fig: TopPop_p}, we show a plot of frequencies for 4 topics over time.
 \begin{figure}[!ht]
   \includegraphics[scale = 0.365]{TopPop_p.eps}
@@ -255,6 +255,11 @@ This plot has some really interesting implications:
 \begin{figure}[!ht]
 	\centerline{\includegraphics[scale = 0.57]{tree_phrase.eps}}
 	\caption{Hierarchical Classification of a Corpus Composed of Phrases alone}
+	 \label{fig: Tree_phrase}
+\end{figure}
+\begin{figure}[!ht]
+	\centerline{\includegraphics[scale = 0.57]{tree_words_phrase.eps}}
+	\caption{Hierarchical Classification of a Corpus Composed of Words plus Phrases with Removal of Duplication}
 	 \label{fig: Tree_phrase}
 \end{figure}
 All of these three plots look similar on the second level, and the classifications very accurately capture the sub fields in condensed matter physics. This is quite surprising especially considering that hLDA a completely unsupervised learning algorithm.\\
@@ -289,17 +294,7 @@ Here again we see that using phrases results in much better interpretability, e.
  Pittsburgh, PA,
  2006
  
- \bibitem[4] {4}
-  Blei, D. and McAuliffe, J.
-  \emph{Supervised Topic Models}.
  
- \bibitem[5] {5}
-  D. Zeimpekis and E. Gallopoulos
-  \emph{TMG: A MATLAB-based term-document Matrix Constructor for Text Collections}.
-  Technical Report, Computer Engineering and Information Department, University of Patras
-  Dec 2003
-  http://scgroup20.ceid.upatras.gr:8000/tmg/
-
 \end{thebibliography}
 %----------------------------------------------------------------------------------------
 
