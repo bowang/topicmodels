@@ -204,9 +204,9 @@ We generated phrases before the second step in the previous section by:
 \subsection*{Duplicate Counts Removal}
 Using the phrase generation method described above can lead to duplicate counts in the resulting corpus. For example, phrase "Stanford University" will generate "Stanford" once, "University" once and "Stanford University" once, while these two words should only be counted as a phrase once. To eliminate this inaccuracy, we implement a two-phase algorithm. The first phase is the same as the approach described above: extract words and enumerate phrases in each document, then filter the words and phrases whose occurrences are below the minimum threshold. In the second phase, documents are scanned through again. For each word in a document, we check whether it can be combined with its previous or next word to generate a phrase appearing in the filtered phrase dictionary. If not, this word is counted as one individual occurrence; otherwise it is skipped. This method basically recounts all terms and checks if their appearance contribute to the generation of a phrase. Only those terms not as part of a phrase is counted. By using this procedure, we were able to produce a corpus which nicely combines both phrases and words. 
 
-\section*{Experiments}
+\section*{Evaluation}
 
-\subsection*{Data Collection}
+\subsection*{Experiment Setup}
 Data is crawled from the online archive website arXiv. In fields like mathematics and physics, almost all scientific papers are self-archived on the arXiv. Despite not peer reviewed, arXiv has its submissions reviewed (or even recategorized if off-topic) by moderators that are experts in their fields of research. In addition, submission dates on arXiv more accurately reflect when the research project was completed and paper drafted, since usually papers are posted on arXiv months before they are finally published on a peer reviewed journal or conference. Based on these facts, we believe arXiv is a better collection of research works than any journal or conference alone.\newline
 The titles, authors, abstracts and citation of papers are scraped from API of \url{http://export.arxiv.org/api/} using Python and stored in separate files according to the publish year. We used only papers in condensed matter physics since one of us is familiar to the field, the methods demonstrated in this report however can be applied to the analysis any field. The corpus contains 14185 abstracts from year 1992 to 2003 and 4645 unique words and 11255 unique phrases after our data processing procedure.
 
@@ -267,6 +267,7 @@ Here again we see that using phrases results in much better interpretability, e.
 
 
 \section*{Conclusion}
+In this work, we proposed a phrase-based extension to topic modeling which improves the clustering performance and enables effective interpretation of the document context. Phrases contain important information on the correlation between documents and can help human to understand since many words appear in combinations. The two-phase phrase extraction mechanism first enumerates word combinations and then filters out significant phrases based on cross document validation. This approach implicitly selects the key phrases in the corpus since it leverages the information hidden in multiple documents. In the evaluation, we compared three scenarios, i.e. word-only, phrase-only, and word+phrase. In both hLDA and DTM modeling, we can clearly see that with phrase information the result is much more accurate and easy to interpret.
 
 %----------------------------------------------------------------------------------------
 %	REFERENCE LIST
